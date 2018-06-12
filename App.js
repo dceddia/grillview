@@ -32,9 +32,20 @@ export default class App extends React.Component {
   }
 }
 
+const PHOTO_INTERVAL = 30000;
+const FOCUS_TIME = 3000;
+
 class Autoshoot extends React.Component {
   state = {
     photo: null
+  }
+
+  componentDidMount() {
+    this.countdown = setTimeout(this.takePicture, PHOTO_INTERVAL);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.countdown);
   }
 
   takePicture = () => {
