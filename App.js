@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { Camera, Permissions } from 'expo';
 
 export default class App extends React.Component {
@@ -33,6 +33,10 @@ export default class App extends React.Component {
 }
 
 class Autoshoot extends React.Component {
+  state = {
+    photo: null
+  }
+
   takePicture = () => {
     this.camera.takePictureAsync({
       quality: 0.1,
@@ -44,16 +48,25 @@ class Autoshoot extends React.Component {
   }
 
   render() {
+    const { photo } = this.state;
+
     return (
       <View style={{ flex: 1, width: '100%' }}>
-        <Camera
-          style={{ flex: 1 }}
-          type={Camera.Constants.Type.back}
-          ref={cam => this.camera = cam}>
-          <TouchableOpacity
-            style={{ flex: 1 }}
-            onPress={this.takePicture}/>
-        </Camera>
+       {photo ? (
+         <ImageBackground
+           style={{ flex: 1 }}
+           source={{ uri: photo }} />
+       ) : (
+         <Camera
+           style={{ flex: 1 }}
+           onPress={this.takePicture}
+           type={Camera.Constants.Type.back}
+           ref={cam => this.camera = cam}>
+           <TouchableOpacity
+             style={{ flex: 1 }}
+             onPress={this.takePicture}/>
+         </Camera>
+       )}
       </View>
     );
   }
