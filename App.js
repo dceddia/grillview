@@ -7,6 +7,14 @@ export default class App extends React.Component {
     cameraPermission: null
   };
 
+  componentDidMount() {
+    Permissions.askAsync(Permissions.CAMERA).then(({ status }) =>
+      this.setState({
+        cameraPermission: status === 'granted'
+      })
+    );
+  }
+
   render() {
     const { cameraPermission } = this.state;
 
