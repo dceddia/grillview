@@ -32,8 +32,8 @@ export default class App extends React.Component {
   }
 }
 
-const PHOTO_INTERVAL = 30000;
-const FOCUS_TIME = 3000;
+const PHOTO_INTERVAL = 4000;
+const FOCUS_TIME = 1000;
 
 class Autoshoot extends React.Component {
   state = {
@@ -55,7 +55,15 @@ class Autoshoot extends React.Component {
       exif: false
     }).then(photo => {
       this.setState({ photo: photo.uri });
-    })
+
+      // In 27 seconds, turn the camera back on
+      setTimeout(() => {
+        this.setState({ photo: null });
+      }, PHOTO_INTERVAL - FOCUS_TIME);
+
+      // In 30 seconds, take the next picture
+      setTimeout(this.takePicture, PHOTO_INTERVAL);
+    });
   }
 
   render() {
