@@ -25,8 +25,22 @@ export default class App extends React.Component {
         ) : cameraPermission === false ? (
           <Text>Permission denied</Text>
         ) : (
-          <Text>yay camera</Text>
+          <Autoshoot/>
         )}
+      </View>
+    );
+  }
+}
+
+class Autoshoot extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, width: '100%' }}>
+        <Camera
+          style={{ flex: 1 }}
+          type={Camera.Constants.Type.back}
+          ref={cam => this.camera = cam}>
+        </Camera>
       </View>
     );
   }
