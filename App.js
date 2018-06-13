@@ -34,6 +34,7 @@ export default class App extends React.Component {
 
 const PHOTO_INTERVAL = 4000;
 const FOCUS_TIME = 1000;
+const SERVER_URL = "http://192.168.1.45:5005/";
 
 class Autoshoot extends React.Component {
   state = {
@@ -48,21 +49,40 @@ class Autoshoot extends React.Component {
     clearInterval(this.countdown);
   }
 
+  uploadPicture = () => {
+    return fetch(SERVER_URL, {
+      body: JSON.stringify({
+        image: this.state.photo.base64
+      }),
+      headers: {
+        'content-type': 'application/json'
+      },
+      method: 'POST'
+    })
+    .then(response => response.json())
+  }
+
+  queuePhoto = () => {
+    // In 27 seconds, turn the camera back on
+    setTimeout(() => {
+      this.setState({ photo: null });
+    }, PHOTO_INTERVAL - FOCUS_TIME);
+
+    // In 30 seconds, take the next picture
+    setTimeout(this.takePicture, PHOTO_INTERVAL);
+  }
+
   takePicture = () => {
     this.camera.takePictureAsync({
       quality: 0.1,
       base64: true,
       exif: false
     }).then(photo => {
-      this.setState({ photo: photo.uri });
-
-      // In 27 seconds, turn the camera back on
-      setTimeout(() => {
-        this.setState({ photo: null });
-      }, PHOTO_INTERVAL - FOCUS_TIME);
-
-      // In 30 seconds, take the next picture
-      setTimeout(this.takePicture, PHOTO_INTERVAL);
+      this.setState({ photo }, () => {
+        this.uploadPicture()
+          .then(this.queuePhoto)
+          .catch(this.queuePhoto);
+      });
     });
   }
 
@@ -74,7 +94,7 @@ class Autoshoot extends React.Component {
        {photo ? (
          <ImageBackground
            style={{ flex: 1 }}
-           source={{ uri: photo }} />
+           source={{ uri: photo.uri }} />
        ) : (
          <Camera
            style={{ flex: 1 }}
