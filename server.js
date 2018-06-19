@@ -18,7 +18,7 @@ app.post('/', (req, res) => {
   console.log('got photo');
 
   // Update the image and respond happily
-  latestPhoto = req.body.photo;
+  latestPhoto = req.body.image;
 
   res.sendStatus(200);
 });
